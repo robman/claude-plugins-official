@@ -23,6 +23,25 @@ ITERATION=$(echo "$FRONTMATTER" | grep '^iteration:' | sed 's/iteration: *//')
 MAX_ITERATIONS=$(echo "$FRONTMATTER" | grep '^max_iterations:' | sed 's/max_iterations: *//')
 # Extract completion_promise and strip surrounding quotes if present
 COMPLETION_PROMISE=$(echo "$FRONTMATTER" | grep '^completion_promise:' | sed 's/completion_promise: *//' | sed 's/^"\(.*\)"$/\1/')
+# Check for dry_run and then_stop modes
+DRY_RUN=$(echo "$FRONTMATTER" | grep '^dry_run:' | sed 's/dry_run: *//')
+THEN_STOP=$(echo "$FRONTMATTER" | grep '^then_stop:' | sed 's/then_stop: *//')
+
+# If dry_run mode, allow exit (don't loop)
+if [[ "$DRY_RUN" == "true" ]]; then
+  echo "🧪 Dry run complete - not starting loop"
+  rm "$RALPH_STATE_FILE"
+  exit 0
+fi
+
+# If then_stop mode, allow exit after spec is generated (for review)
+if [[ "$THEN_STOP" == "true" ]]; then
+  echo ""
+  echo "⏸️  Spec generated! Review/edit at: .claude/ralph-loop.local.md"
+  echo "   When ready, just run: /ralph-loop"
+  # Don't delete state file - they'll run /ralph-loop next to continue
+  exit 0
+fi
 
 # Validate numeric fields before arithmetic operations
 if [[ ! "$ITERATION" =~ ^[0-9]+$ ]]; then

@@ -57,8 +57,40 @@ Start a Ralph loop in your current session.
 ```
 
 **Options:**
+- `--ask-me` - Have Ralph Wiggum interview you to build the prompt (see below)
+- `--then-stop` - Generate spec but stop for review before starting loop
 - `--max-iterations <n>` - Stop after N iterations (default: unlimited)
 - `--completion-promise <text>` - Phrase that signals completion
+
+### /ralph-loop --ask-me (Interview Mode)
+
+Don't know exactly what you want? Let Ralph interview you!
+
+```bash
+/ralph-loop --ask-me
+```
+
+Ralph Wiggum will conduct a requirements-gathering interview (in character!) to help you figure out:
+- What your project does
+- Tech stack and language
+- Key features and success criteria
+- Testing approach and concerns
+
+After the interview, Ralph generates a professional prompt specification and starts the loop.
+
+**Example session:**
+```
+🍎 Hi! I'm Ralph! What does your computy thing do? My cat's breath smells like cat food.
+
+    o
+   /|\    [___]
+   / \    |   |
+  me      compooter
+
+[Ralph asks questions using AskUserQuestion tool...]
+[You answer...]
+[Ralph generates prompt and starts the loop!]
+```
 
 ### /cancel-ralph
 
@@ -68,6 +100,85 @@ Cancel the active Ralph loop.
 ```bash
 /cancel-ralph
 ```
+
+## Interview Mode Details
+
+Before: Writing the prompt was like doing your homework - but more boring.
+After: Ralph Wiggum interviews you and writes the spec. My cat's breath smells like cat food, but YOUR prompt smells like success!
+
+### What Ralph Asks About
+
+Ralph conducts a requirements-gathering interview (in character!) covering:
+- What the project does ("What does your computy thing do?")
+- Tech stack ("What magic words does it speak? My fish speaks Spanish!")
+- Key features, success criteria, constraints
+- Testing approach ("How do we check if it's not breaked?")
+- Max iterations (as preset options - "25 tries (recommended)")
+
+### Ralph-Optimised Prompt Format
+
+Ralph generates a prompt optimised for Ralph loops:
+
+```markdown
+## Project: [Name]
+
+[One paragraph description]
+
+## Requirements
+- [ ] Requirement 1 (specific and measurable)
+- [ ] Requirement 2
+- [ ] Requirement 3
+
+## Technical Constraints
+- Language/framework: [specific]
+- Must include: [specific things]
+- Must NOT: [things to avoid - prevents "invention"]
+
+## Success Criteria (ALL must be true to complete)
+- [ ] All requirements checked off
+- [ ] Code runs without errors
+- [ ] [Specific test/verification]
+
+## Completion
+When ALL success criteria are met, output:
+<promise>COMPLETE</promise>
+```
+
+**Why this format works:**
+- Checkboxes let Ralph track progress across iterations
+- "Must NOT" constraints prevent Claude from "inventing" unwanted features
+- Measurable success criteria = objective "done" state
+- The `<promise>` tag is how Ralph knows to stop the loop
+
+### Review Before Starting (--then-stop)
+
+Want to review/edit the spec before Ralph starts building?
+
+```bash
+/ralph-loop --ask-me --then-stop
+```
+
+This will:
+1. Run the full interview
+2. Generate and save the spec to `.claude/ralph-loop.local.md`
+3. Stop for you to review/edit
+
+When ready, just run `/ralph-loop` - it auto-detects the existing spec and continues.
+
+You can also override max iterations when resuming:
+```bash
+/ralph-loop --max-iterations 50
+```
+
+### Ralph's Contributions
+
+Each interview is unique! Ralph improvises:
+- ASCII art of "compooter" and bugs that live in code
+- Anecdotes like "I dressed up as a PDF for Halloween. Nobody knowed what I was."
+- Accidentally profound insights about your project
+- Drawings labelled incorrectly or too literally
+
+One time I glued my head to my shoulder! But I never glued a bug to production. That's what tests are for!
 
 ## Prompt Writing Best Practices
 
